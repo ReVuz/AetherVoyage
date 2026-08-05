@@ -1,0 +1,25 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Django local settings / environment variables
+.env
+
+# SQLite database
+*.sqlite3
+db.sqlite3
+
+# Media and Static dirs
+media/
+staticfiles/
+
+# OS files
+.DS_Store
+Thumbs.db

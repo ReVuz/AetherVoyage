@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Staff Dashboard - AetherVoyage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="brand-font mb-1">Staff Operations Portal</h2>
+            <p class="text-muted-custom small mb-0">Review pending user reservations and manage tour listings.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'packages:manage_packages' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-gear me-1"></i>Manage Catalog</a>
+            <a href="{% url 'packages:add_package' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle me-1"></i>Add Package</a>
+        </div>
+    </div>
+
+    <!-- Metrics Stats -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card p-3 border text-center shadow-sm">
+                <span class="text-uppercase text-muted-custom small fw-semibold">Pending Approvals</span>
+                <h3 class="brand-font my-2 text-warning">{{ stats.pending_count }}</h3>
+                <span class="small text-muted-custom">Reservations awaiting review</span>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card p-3 border text-center shadow-sm">
+                <span class="text-uppercase text-muted-custom small fw-semibold">Tour Packages</span>
+                <h3 class="brand-font my-2 text-primary">{{ stats.packages_count }}</h3>
+                <span class="small text-muted-custom">Total active & inactive tour items</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border text-center shadow-sm">
+                <span class="text-uppercase text-muted-custom small fw-semibold">Destinations</span>
+                <h3 class="brand-font my-2 text-success">{{ stats.destinations_count }}</h3>
+                <span class="small text-muted-custom">Global catalog locations</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Reservations Grid (Rule 15: Tables for staff lists) -->
+    <div class="card mb-5 border">
+        <div class="card-header bg-white py-3">
+            <h5 class="brand-font mb-0">Pending Reservations (Awaiting Approval)</h5>
+        </div>
+        <div class="card-body p-0">
+            {% if pending_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-custom mb-0" style="vertical-align: middle;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Trip Package</th>
+                                <th>Travelers</th>
+                                <th>Total Revenue</th>
+                                <th>Date Requested</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in pending_bookings %}
+                                <tr>
+                                    <td><strong>#{{ booking.id }}</strong></td>
+                                    <td>
+                                        <div class="fw-semibold">{{ booking.user.username }}</div>
+                                        <div class="text-muted-custom small">{{ booking.user.email }}</div>
+                                    </td>
+                                    <td>
+                                        <div><a href="{% url 'packages:package_detail' booking.package.pk %}" class="fw-semibold text-decoration-none">{{ booking.package.title }}</a></div>
+                                        <div class="text-muted-custom small"><i class="bi bi-geo-alt me-1"></i>{{ booking.package.destination.name }} (slots: {{ booking.package.available_slots }} left)</div>
+                                    </td>
+                                    <td>{{ booking.number_of_travelers }}</td>
+                                    <td class="fw-semibold text-accent">${{ booking.total_price|floatformat:2 }}</td>
+                                    <td>{{ booking.booking_date|date:"Y-m-d H:i" }}</td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-2">
+                                            <form method="post" action="{% url 'bookings:approve_booking' booking.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success btn-sm px-3 fw-medium">Approve</button>
+                                            </form>
+                                            <form method="post" action="{% url 'bookings:reject_booking' booking.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to reject this booking? slots will be restored.');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm px-3">Reject</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-check-circle text-success mb-2" style="font-size: 2.5rem;"></i>
+                    <p class="text-muted-custom mb-0">Good job! No pending reservations require review.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Active Tour Packages Quick View -->
+    <div class="card border">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="brand-font mb-0">Active Catalog Listings</h5>
+            <a href="{% url 'packages:manage_packages' %}" class="small text-decoration-underline">Manage All</a>
+        </div>
+        <div class="card-body p-0">
+            {% if active_packages %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-custom mb-0" style="vertical-align: middle;">
+                        <thead>
+                            <tr>
+                                <th>Package Title</th>
+                                <th>Destination</th>
+                                <th>Price</th>
+                                <th>Duration</th>
+                                <th>Available Slots</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pkg in active_packages %}
+                                <tr>
+                                    <td><a href="{% url 'packages:package_detail' pkg.pk %}" class="fw-semibold text-decoration-none">{{ pkg.title }}</a></td>
+                                    <td>{{ pkg.destination.name }}, {{ pkg.destination.location }}</td>
+                                    <td class="fw-semibold">${{ pkg.price }}</td>
+                                    <td>{{ pkg.duration_days }} Days</td>
+                                    <td>{{ pkg.available_slots }} / {{ pkg.max_slots }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted-custom text-center py-4 mb-0">No active catalog listings found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

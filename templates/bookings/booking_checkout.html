@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - AetherVoyage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4 brand-font"><i class="bi bi-credit-card me-2"></i>Trip Reservation Checkout</h2>
+                    <hr class="mb-4">
+                    
+                    <div class="row">
+                        <!-- Package Details -->
+                        <div class="col-md-5 mb-4 mb-md-0 border-end-md">
+                            <h5 class="brand-font mb-3">Selected Trip</h5>
+                            <div class="bg-light p-3 rounded border">
+                                <h6 class="fw-bold mb-1 text-primary">{{ package.title }}</h6>
+                                <p class="text-muted-custom small mb-2"><i class="bi bi-geo-alt me-1"></i>{{ package.destination.name }}, {{ package.destination.location }}</p>
+                                
+                                <div class="small text-muted-custom mt-3">
+                                    <div class="mb-1"><span class="fw-semibold">Duration:</span> {{ package.duration_days }} Days</div>
+                                    <div class="mb-1"><span class="fw-semibold">Starts:</span> {{ package.start_date|date:"M d, Y" }}</div>
+                                    <div><span class="fw-semibold">Ends:</span> {{ package.end_date|date:"M d, Y" }}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6 class="fw-bold mb-2">Price Breakdown</h6>
+                                <div class="d-flex justify-content-between small text-muted-custom mb-1">
+                                    <span>Price per traveler:</span>
+                                    <span class="fw-semibold text-dark">${{ package.price|floatformat:2 }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted-custom mb-1">
+                                    <span>Traveler quantity:</span>
+                                    <span class="fw-semibold text-dark" id="summaryQty">1</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total Price:</span>
+                                    <span class="text-accent" id="summaryTotal">${{ package.price|floatformat:2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Reservation Form -->
+                        <div class="col-md-7 ps-md-4">
+                            <h5 class="brand-font mb-3">Traveler Information</h5>
+                            
+                            <form method="post" id="checkoutForm" novalidate>
+                                {% csrf_token %}
+                                
+                                <div class="mb-3">
+                                    <label for="number_of_travelers" class="form-label small fw-semibold">Number of Travelers</label>
+                                    <input type="number" name="number_of_travelers" id="number_of_travelers" class="form-control" value="1" min="1" max="{{ package.available_slots }}" required>
+                                    <div class="form-text text-muted-custom" style="font-size: 0.75rem;">
+                                        Maximum available slots for this trip: {{ package.available_slots }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="special_requests" class="form-label small fw-semibold">Special Requests (Optional)</label>
+                                    <textarea name="special_requests" id="special_requests" class="form-control" rows="4" placeholder="e.g. Dietary requirements, room preferences, accessibility requests..."></textarea>
+                                </div>
+                                
+                                <div class="alert alert-light border small mb-4">
+                                    <i class="bi bi-info-circle text-primary me-2"></i>You are reserving slots for this package. A staff member will review and confirm availability before approving your request.
+                                </div>
+                                
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{% url 'packages:package_detail' package.pk %}" class="btn btn-outline-secondary">Back to Detail</a>
+                                    <button type="submit" class="btn btn-accent px-4 fw-semibold">Confirm Booking</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const qtyInput = document.getElementById('number_of_travelers');
+        const summaryQty = document.getElementById('summaryQty');
+        const summaryTotal = document.getElementById('summaryTotal');
+        const pricePerTraveler = parseFloat("{{ package.price }}");
+        const maxSlots = parseInt("{{ package.available_slots }}");
+
+        qtyInput.addEventListener('input', function() {
+            let qty = parseInt(qtyInput.value);
+            
+            // Validation bounds
+            if (isNaN(qty) || qty <= 0) {
+                qty = 1;
+            } else if (qty > maxSlots) {
+                qty = maxSlots;
+                qtyInput.value = maxSlots;
+            }
+            
+            summaryQty.textContent = qty;
+            const total = pricePerTraveler * qty;
+            summaryTotal.textContent = '$' + total.toFixed(2);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Saved Itineraries - AetherVoyage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="brand-font mb-1">My Saved Itineraries</h2>
+            <p class="text-muted-custom small mb-0">Browse through your custom generated day-by-day travel schedules.</p>
+        </div>
+        <a href="{% url 'ai_itinerary:itinerary_planner' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle me-1"></i>Create New</a>
+    </div>
+
+    <div class="row">
+        {% if itineraries %}
+            {% for itin in itineraries %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-light text-secondary border small">{{ itin.travel_style|title }}</span>
+                            <span class="text-muted-custom small" style="font-size: 0.75rem;">{{ itin.created_at|date:"Y-m-d" }}</span>
+                        </div>
+                        
+                        <h4 class="brand-font my-2">{{ itin.destination }}</h4>
+                        <p class="text-muted-custom small mb-3"><i class="bi bi-clock me-1"></i>{{ itin.duration_days }} Days &bull; <i class="bi bi-wallet2 me-1"></i>{{ itin.budget_category|title }}</p>
+                        
+                        {% if itin.interests %}
+                            <p class="small text-muted-custom flex-grow-1" style="font-style: italic;">Focus: "{{ itin.interests|truncatechars:70 }}"</p>
+                        {% else %}
+                            <p class="small text-muted-custom flex-grow-1">General sightseeing exploration package.</p>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2 mt-auto pt-3 border-top">
+                            <a href="{% url 'ai_itinerary:itinerary_detail' itin.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">View Plan</a>
+                            <a href="{% url 'ai_itinerary:download_itinerary_pdf' itin.pk %}" class="btn btn-light btn-sm px-2 border" title="Download PDF"><i class="bi bi-file-pdf text-danger"></i></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-light border text-center py-5">
+                    <i class="bi bi-compass text-muted mb-3" style="font-size: 3rem;"></i>
+                    <h4 class="brand-font">No Saved Itineraries</h4>
+                    <p class="text-muted-custom small mb-4">You haven't generated any AI travel plans yet. Give it a try!</p>
+                    <a href="{% url 'ai_itinerary:itinerary_planner' %}" class="btn btn-primary">Start Planning</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

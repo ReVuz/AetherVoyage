@@ -1,6 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from accounts.decorators import admin_required, staff_required, customer_required
+
+from bookings.models import Booking
+from packages.models import TourPackage, Destination
+from ai_itinerary.models import SavedItinerary
+
+User = get_user_model()
 
 @login_required
 def redirect_dashboard(request):
@@ -17,15 +25,22 @@ def redirect_dashboard(request):
 @login_required
 @customer_required
 def customer_dashboard(request):
-    # Retrieve customer-specific data (bookings, saved itineraries)
-    # We will expand this once those models are defined
+    """
+    Retrieve customer-specific bookings, saved itineraries, and spending history.
+    """
+    bookings = Booking.objects.filter(user=request.user).select_related('package', 'package__destination')
+    itineraries = SavedItinerary.objects.filter(user=request.user)
+    
+    # Calculate approved spendings
+    approved_spent = bookings.filter(status='approved').aggregate(Sum('total_price'))['total_price__sum'] or 0.0
+    
     context = {
-        'bookings': [],
-        'itineraries': [],
+        'bookings': bookings,
+        'itineraries': itineraries,
         'stats': {
-            'total_bookings': 0,
-            'total_spent': 0.0,
-            'total_itineraries': 0,
+            'total_bookings': bookings.count(),
+            'total_spent': approved_spent,
+            'total_itineraries': itineraries.count(),
         }
     }
     return render(request, 'dashboard/customer_dashboard.html', context)
@@ -33,15 +48,19 @@ def customer_dashboard(request):
 @login_required
 @staff_required
 def staff_dashboard(request):
-    # Retrieve staff-specific data (pending bookings, packages count, etc.)
-    # We will expand this once those models are defined
+    """
+    Retrieve staff dashboard showing pending reservations, total inventory counts, and status filters.
+    """
+    pending_bookings = Booking.objects.filter(status='pending').select_related('user', 'package', 'package__destination')
+    active_packages = TourPackage.objects.filter(is_active=True).select_related('destination')[:5]
+    
     context = {
-        'pending_bookings': [],
-        'active_packages': [],
+        'pending_bookings': pending_bookings,
+        'active_packages': active_packages,
         'stats': {
-            'pending_count': 0,
-            'packages_count': 0,
-            'destinations_count': 0,
+            'pending_count': Booking.objects.filter(status='pending').count(),
+            'packages_count': TourPackage.objects.count(),
+            'destinations_count': Destination.objects.count(),
         }
     }
     return render(request, 'dashboard/staff_dashboard.html', context)
@@ -49,15 +68,19 @@ def staff_dashboard(request):
 @login_required
 @admin_required
 def admin_dashboard(request):
-    # Retrieve global system stats
-    # We will expand this once models are defined
+    """
+    Retrieve global system stats (users count, bookings, gross approved revenue).
+    """
+    recent_bookings = Booking.objects.all().select_related('user', 'package', 'package__destination')[:10]
+    total_revenue = Booking.objects.filter(status='approved').aggregate(Sum('total_price'))['total_price__sum'] or 0.0
+    
     context = {
-        'recent_bookings': [],
+        'recent_bookings': recent_bookings,
         'stats': {
-            'total_users': 0,
-            'total_bookings': 0,
-            'total_revenue': 0.0,
-            'packages_count': 0,
+            'total_users': User.objects.count(),
+            'total_bookings': Booking.objects.count(),
+            'total_revenue': total_revenue,
+            'packages_count': TourPackage.objects.count(),
         }
     }
     return render(request, 'dashboard/admin_dashboard.html', context)

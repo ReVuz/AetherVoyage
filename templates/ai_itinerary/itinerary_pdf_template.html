@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        @page {
+            size: letter;
+            margin: 1.0in;
+            @bottom-right {
+                content: "Page " counter(page);
+                font-family: Helvetica, sans-serif;
+                font-size: 9pt;
+                color: #64748b;
+            }
+        }
+        body {
+            font-family: Helvetica, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            color: #334155;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #1e3a8a; /* Deep Navy */
+        }
+        h1 {
+            font-size: 22pt;
+            margin-bottom: 4pt;
+        }
+        .subtitle {
+            font-size: 11pt;
+            color: #64748b;
+            margin-bottom: 20pt;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 8pt;
+        }
+        .section-title {
+            font-size: 15pt;
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 4pt;
+            margin-top: 25pt;
+            margin-bottom: 12pt;
+        }
+        h3, h5 {
+            font-size: 13pt;
+            color: #b45309; /* Warm Ochre */
+            margin-top: 15pt;
+            margin-bottom: 6pt;
+        }
+        p {
+            margin-bottom: 8pt;
+        }
+        ul {
+            margin-top: 4pt;
+            margin-bottom: 10pt;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 4pt;
+        }
+    </style>
+</head>
+<body>
+    <h1>AetherVoyage Custom Itinerary</h1>
+    <div class="subtitle">
+        <strong>Destination:</strong> {{ itinerary.destination }} &bull; 
+        <strong>Duration:</strong> {{ itinerary.duration_days }} Days &bull; 
+        <strong>Travel Style:</strong> {{ itinerary.travel_style|title }}<br>
+        <strong>Traveler:</strong> {{ user.username }} &bull; 
+        <strong>Generated:</strong> {{ itinerary.created_at|date:"M d, Y" }}
+    </div>
+
+    <div class="section-title">Day-by-Day Schedule</div>
+    {{ itinerary.itinerary_content|safe }}
+
+    <div class="section-title">Estimated Budget Breakdown</div>
+    {{ itinerary.budget_estimate|safe }}
+
+    <div class="section-title">Recommended Packing Checklist</div>
+    {{ itinerary.packing_list|safe }}
+</body>
+</html>

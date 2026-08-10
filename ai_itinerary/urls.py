@@ -4,5 +4,9 @@ from . import views
 app_name = 'ai_itinerary'
 
 urlpatterns = [
-    # Stubs for now
+    path('planner/', views.itinerary_planner, name='itinerary_planner'),
+    path('my-itineraries/', views.itinerary_list, name='itinerary_list'),
+    path('my-itineraries/<int:pk>/', views.itinerary_detail, name='itinerary_detail'),
+    path('my-itineraries/<int:pk>/pdf/', views.download_itinerary_pdf, name='download_itinerary_pdf'),
+    path('chat/api/', views.chat_api, name='chat_api'),
 ]

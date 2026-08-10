@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Itinerary for {{ itinerary.destination }} - AetherVoyage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Back Navigation & Download PDF -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'ai_itinerary:itinerary_list' %}" class="btn btn-light btn-sm border"><i class="bi bi-arrow-left me-1"></i>My Itineraries</a>
+        <a href="{% url 'ai_itinerary:download_itinerary_pdf' itinerary.pk %}" class="btn btn-primary btn-sm"><i class="bi bi-file-pdf me-1"></i>Download PDF Brochure</a>
+    </div>
+
+    <!-- Header Block -->
+    <div class="card p-4 mb-4 border">
+        <div class="card-body p-0">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="text-uppercase text-muted-custom small fw-semibold" style="letter-spacing: 0.1em;">Custom Travel Planner Blueprint</span>
+                    <h2 class="brand-font my-2">{{ itinerary.destination }}</h2>
+                    <div class="d-flex gap-3 text-muted-custom small">
+                        <span><i class="bi bi-clock me-1"></i>{{ itinerary.duration_days }} Days</span>
+                        <span><i class="bi bi-wallet2 me-1"></i>{{ itinerary.budget_category|title }}</span>
+                        <span><i class="bi bi-compass me-1"></i>{{ itinerary.travel_style|title }}</span>
+                    </div>
+                </div>
+                {% if itinerary.interests %}
+                    <div class="bg-light p-3 rounded border" style="max-width: 350px;">
+                        <span class="small fw-semibold text-dark block mb-1">Focus & Preferences:</span>
+                        <p class="small text-muted-custom mb-0" style="line-height: 1.4;">"{{ itinerary.interests }}"</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Layout (Detailed Schedule, Budget suggestions, Packing check-list) -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card p-4 border h-100">
+                <h4 class="brand-font mb-4"><i class="bi bi-calendar3 text-primary me-2"></i>Detailed Travel Schedule</h4>
+                <div class="itinerary-schedule">
+                    {{ itinerary.itinerary_content|safe }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Budget Estimates Drawer -->
+            <div class="card p-4 border mb-4">
+                <h5 class="brand-font mb-3"><i class="bi bi-cash-coin text-success me-2"></i>Budget Estimation</h5>
+                <div class="small">
+                    {% if itinerary.budget_estimate %}
+                        {{ itinerary.budget_estimate|safe }}
+                    {% else %}
+                        <p class="text-muted-custom small">No budget estimation available.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Packing Checklist Drawer -->
+            <div class="card p-4 border">
+                <h5 class="brand-font mb-3"><i class="bi bi-backpack text-primary me-2"></i>Recommended Packing Checklist</h5>
+                <div class="small">
+                    {% if itinerary.packing_list %}
+                        {{ itinerary.packing_list|safe }}
+                    {% else %}
+                        <p class="text-muted-custom small">No packing checklist available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

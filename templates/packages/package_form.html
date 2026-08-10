@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} - AetherVoyage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4 brand-font">{{ title }}</h2>
+                    <hr class="mb-4">
+                    
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger p-2 small mb-3">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_destination" class="form-label small fw-semibold">Destination</label>
+                                {{ form.destination }}
+                                {% for error in form.destination.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_title" class="form-label small fw-semibold">Package Title</label>
+                                {{ form.title }}
+                                {% for error in form.title.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label small fw-semibold">Description</label>
+                            {{ form.description }}
+                            {% for error in form.description.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="id_price" class="form-label small fw-semibold">Price per Traveler ($)</label>
+                                {{ form.price }}
+                                {% for error in form.price.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_duration_days" class="form-label small fw-semibold">Duration (Days)</label>
+                                {{ form.duration_days }}
+                                {% for error in form.duration_days.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_image" class="form-label small fw-semibold">Package Image</label>
+                                {{ form.image }}
+                                {% for error in form.image.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_start_date" class="form-label small fw-semibold">Travel Start Date</label>
+                                <input type="date" name="start_date" id="id_start_date" class="form-control {% if form.start_date.errors %}is-invalid{% endif %}" value="{{ form.start_date.value|date:'Y-m-d'|default_if_none:form.start_date.value|default_if_none:'' }}" required>
+                                {% for error in form.start_date.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_end_date" class="form-label small fw-semibold">Travel End Date</label>
+                                <input type="date" name="end_date" id="id_end_date" class="form-control {% if form.end_date.errors %}is-invalid{% endif %}" value="{{ form.end_date.value|date:'Y-m-d'|default_if_none:form.end_date.value|default_if_none:'' }}" required>
+                                {% for error in form.end_date.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="id_max_slots" class="form-label small fw-semibold">Maximum Slots</label>
+                                {{ form.max_slots }}
+                                {% for error in form.max_slots.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="id_available_slots" class="form-label small fw-semibold">Available Slots</label>
+                                {{ form.available_slots }}
+                                {% for error in form.available_slots.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4 mb-4 d-flex align-items-center">
+                                <div class="form-check mt-3">
+                                    {{ form.is_active }}
+                                    <label for="id_is_active" class="form-check-label small fw-semibold ms-2">Package is Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'packages:manage_packages' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Package blueprints</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

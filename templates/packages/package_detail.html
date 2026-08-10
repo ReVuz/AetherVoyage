@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block title %}{{ package.title }} - AetherVoyage{% endblock %}
+
+{% block content %}
+<!-- Large Destination/Package Image (Rule 10) -->
+<div class="position-relative" style="height: 380px; width: 100%; overflow: hidden;">
+    {% if package.image %}
+        <img src="{{ package.image.url }}" alt="{{ package.title }}" class="w-100 h-100" style="object-fit: cover;">
+    {% elif package.destination.image %}
+        <img src="{{ package.destination.image.url }}" alt="{{ package.title }}" class="w-100 h-100" style="object-fit: cover;">
+    {% else %}
+        <div class="bg-secondary text-white w-100 h-100 d-flex align-items-center justify-content-center">
+            <i class="bi bi-image" style="font-size: 6rem;"></i>
+        </div>
+    {% endif %}
+    <div class="position-absolute bottom-0 start-0 w-100 py-4 px-3" style="background: linear-gradient(transparent, rgba(0,0,0,0.85));">
+        <div class="container text-white">
+            <span class="text-uppercase small fw-semibold text-accent" style="letter-spacing: 0.1em;">{{ package.destination.name }}, {{ package.destination.location }}</span>
+            <h1 class="brand-font text-white mt-1 mb-0">{{ package.title }}</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Left Column: Details & Reviews (Rule 10) -->
+        <div class="col-lg-8 mb-4">
+            <!-- Travel Details Metadata -->
+            <div class="d-flex flex-wrap gap-4 py-3 px-4 bg-white border rounded mb-4 text-muted-custom small">
+                <div>
+                    <i class="bi bi-clock text-primary me-2"></i><span class="fw-semibold">Duration:</span> {{ package.duration_days }} Days
+                </div>
+                <div>
+                    <i class="bi bi-calendar3 text-primary me-2"></i><span class="fw-semibold">Dates:</span> {{ package.start_date|date:"M d, Y" }} – {{ package.end_date|date:"M d, Y" }}
+                </div>
+                <div>
+                    <i class="bi bi-people text-primary me-2"></i><span class="fw-semibold">Slots Remaining:</span> 
+                    {% if package.available_slots > 0 %}
+                        <span class="text-success fw-bold">{{ package.available_slots }} left</span>
+                    {% else %}
+                        <span class="text-danger fw-bold">Sold Out</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <i class="bi bi-star-fill text-warning me-2"></i><span class="fw-semibold">Rating:</span> 
+                    {% if package.avg_rating %}
+                        {{ package.avg_rating|floatformat:1 }} / 5.0
+                    {% else %}
+                        No reviews yet
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="bg-white border rounded p-4 mb-4">
+                <h4 class="brand-font mb-3">About This Trip</h4>
+                <p>{{ package.description|linebreaksbr }}</p>
+            </div>
+
+            <!-- What's Included / Not Included (Rule 10) -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="bg-white border rounded p-4 h-100">
+                        <h5 class="brand-font text-success mb-3"><i class="bi bi-check-circle me-2"></i>What's Included</h5>
+                        <ul class="small ps-3 mb-0">
+                            <li class="mb-2">Professional English-speaking local tour guide</li>
+                            <li class="mb-2">Bespoke 3-star and 4-star boutique accommodation</li>
+                            <li class="mb-2">Daily buffet breakfast and selected dinners</li>
+                            <li class="mb-2">All ground transportation and group transfers</li>
+                            <li class="mb-2">Entrance fees for planned temple & park excursions</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-white border rounded p-4 h-100">
+                        <h5 class="brand-font text-danger mb-3"><i class="bi bi-x-circle me-2"></i>What's Not Included</h5>
+                        <ul class="small ps-3 mb-0">
+                            <li class="mb-2">International flight tickets & transit visas</li>
+                            <li class="mb-2">Personal travel medical insurance (highly recommended)</li>
+                            <li class="mb-2">Optional activities, optional guide tipping</li>
+                            <li class="mb-2">Lunch and dinners not explicitly noted in schedule</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section (Rule 10) -->
+            <div class="bg-white border rounded p-4 mb-4">
+                <h4 class="brand-font mb-4">Traveler Reviews</h4>
+                
+                {% if reviews %}
+                    {% for review in reviews %}
+                        <div class="border-bottom pb-3 mb-3 {% if forloop.last %}border-0 pb-0 mb-0{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if review.user.profile_picture %}
+                                        <img src="{{ review.user.profile_picture.url }}" alt="{{ review.user.username }}" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                                    {% else %}
+                                        <i class="bi bi-person-circle text-secondary fs-5"></i>
+                                    {% endif %}
+                                    <span class="fw-semibold small">{{ review.user.username }}</span>
+                                    <span class="badge bg-light text-secondary border small">{{ review.user.role }}</span>
+                                </div>
+                                <span class="text-muted-custom small">{{ review.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="text-warning small mb-2">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="small text-muted-custom mb-0">"{{ review.comment }}"</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted-custom small mb-0">No reviews yet. Share your experience below!</p>
+                {% endif %}
+
+                <!-- Review Submission (Customer Only) -->
+                {% if user.is_authenticated %}
+                    {% if user.role == 'customer' or user.is_superuser %}
+                        <hr class="my-4">
+                        <h5 class="brand-font mb-3">Leave a Review</h5>
+                        <form method="post" action="{% url 'packages:package_detail' package.pk %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_rating" class="form-label small fw-semibold">Rating</label>
+                                {{ form.rating }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_comment" class="form-label small fw-semibold">Comment</label>
+                                {{ form.comment }}
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <hr class="my-4">
+                    <p class="small text-muted-custom mb-0">
+                        <a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to submit a travel review.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Booking Drawer (Rule 10: Clear actions, non-glowing button) -->
+        <div class="col-lg-4">
+            <div class="card p-4 border shadow-sm sticky-top" style="top: 24px; z-index: 10;">
+                <span class="text-muted-custom small">Price per traveler</span>
+                <div class="d-flex align-items-baseline gap-1 mb-3">
+                    <span class="text-accent fs-2 fw-bold">${{ package.price|floatformat:2 }}</span>
+                    <span class="text-muted-custom small">USD</span>
+                </div>
+                
+                <hr class="my-3">
+                
+                <div class="row g-2 mb-4 text-muted-custom small">
+                    <div class="col-6 fw-semibold">Departure:</div>
+                    <div class="col-6 text-end text-dark">{{ package.start_date|date:"M d, Y" }}</div>
+                    
+                    <div class="col-6 fw-semibold">Duration:</div>
+                    <div class="col-6 text-end text-dark">{{ package.duration_days }} Days</div>
+                    
+                    <div class="col-6 fw-semibold">Available Slots:</div>
+                    <div class="col-6 text-end text-dark">
+                        {% if package.available_slots > 0 %}
+                            {{ package.available_slots }} slots
+                        {% else %}
+                            <span class="text-danger fw-bold">Sold Out</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if package.available_slots > 0 %}
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'customer' or user.is_superuser %}
+                            <a href="{% url 'bookings:booking_checkout' package.id %}" class="btn btn-accent w-100 py-2 fw-semibold">
+                                <i class="bi bi-calendar-check me-2"></i>Book This Trip
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary w-100 py-2" disabled>
+                                Booking Reserved for Customers
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-accent w-100 py-2 fw-semibold">
+                            Log In to Book
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <button class="btn btn-secondary w-100 py-2" disabled>
+                        Sold Out
+                    </button>
+                {% endif %}
+                
+                <p class="text-center text-muted-custom small mt-3 mb-0">
+                    Need custom dates? Use our <a href="{% url 'ai_itinerary:itinerary_planner' %}">AI Travel Planner</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}AetherVoyage - Custom Travel Packages & AI Itinerary Planner{% endblock %}
+
+{% block content %}
+<!-- Hero Section (Rule 8: Strong destination photography, no floating card or glowing gradients) -->
+<div class="hero-section" style="background-image: url('{% static "images/hero.png" %}');">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 class="brand-font">Explore the world's finest destinations.</h1>
+        <p class="lead mb-4" style="color: #f1f5f9;">Find hand-crafted tour packages and generate custom travel itineraries tailored to your style and budget.</p>
+        
+        <!-- Search/exploration controls (Rule 8) -->
+        <form action="{% url 'packages:package_list' %}" method="get" class="bg-white p-3 rounded shadow-sm d-flex flex-column flex-md-row gap-3 align-items-center">
+            <div class="flex-grow-1 w-100">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control border-start-0 border" placeholder="Where do you want to go? (e.g. Kyoto, Alps)" aria-label="Search destination">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 w-md-auto text-nowrap px-4 py-2">
+                Search Packages
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Featured Destinations (Rule 3: Photography-first, clean destination name & location) -->
+<div class="container my-5 py-3">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="brand-font mb-1">Featured Destinations</h2>
+            <p class="text-muted-custom small mb-0">Discover top locations hand-picked by our travel experts.</p>
+        </div>
+        <a href="{% url 'packages:package_list' %}" class="small fw-semibold">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+    
+    <div class="row">
+        {% if destinations %}
+            {% for dest in destinations %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card h-100 border-0" style="overflow: hidden;">
+                        {% if dest.image %}
+                            <img src="{{ dest.image.url }}" class="card-img-top" alt="{{ dest.name }}" style="height: 200px; object-fit: cover; border-radius: 4px;">
+                        {% else %}
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 4px;">
+                                <i class="bi bi-image" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body px-0 pt-3 pb-0">
+                            <h5 class="brand-font mb-1" style="font-size: 1.15rem;">{{ dest.name }}</h5>
+                            <p class="text-muted-custom small mb-2"><i class="bi bi-geo-alt me-1"></i>{{ dest.location }}</p>
+                            <p class="small text-muted-custom">{{ dest.description|truncatewords:15 }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-light border text-center py-4">
+                    <i class="bi bi-compass text-muted mb-2" style="font-size: 2rem;"></i>
+                    <p class="text-muted mb-0">No featured destinations found. Add some in the administration panel.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Popular Tour Packages (Rule 9: Usability & comparing details) -->
+<div class="bg-light py-5 border-top border-bottom">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="brand-font mb-1">Popular Tour Packages</h2>
+                <p class="text-muted-custom small mb-0">Curated itineraries and complete guided tours ready for booking.</p>
+            </div>
+            <a href="{% url 'packages:package_list' %}" class="small fw-semibold">Browse Packages <i class="bi bi-arrow-right"></i></a>
+        </div>
+        
+        <div class="row">
+            {% if packages %}
+                {% for pkg in packages %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100">
+                            {% if pkg.image %}
+                                <img src="{{ pkg.image.url }}" class="card-img-top" alt="{{ pkg.title }}" style="height: 180px; object-fit: cover;">
+                            {% elif pkg.destination.image %}
+                                <img src="{{ pkg.destination.image.url }}" class="card-img-top" alt="{{ pkg.title }}" style="height: 180px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
+                                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body d-flex flex-column p-3">
+                                <span class="text-uppercase text-muted-custom fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">{{ pkg.destination.name }}</span>
+                                <h5 class="brand-font my-1" style="font-size: 1.1rem; line-height: 1.3;">{{ pkg.title }}</h5>
+                                
+                                <div class="d-flex align-items-center gap-1 my-2">
+                                    {% if pkg.avg_rating %}
+                                        <span class="text-warning small"><i class="bi bi-star-fill"></i></span>
+                                        <span class="small fw-semibold">{{ pkg.avg_rating|floatformat:1 }}</span>
+                                    {% else %}
+                                        <span class="text-muted-custom small"><i class="bi bi-star"></i></span>
+                                        <span class="text-muted-custom small">No reviews</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-auto pt-2 border-top">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="text-accent fs-5">${{ pkg.price|floatformat:0 }}</span>
+                                            <span class="text-muted-custom small"> / traveler</span>
+                                        </div>
+                                        <span class="badge bg-secondary-subtle text-secondary border small">{{ pkg.duration_days }} days</span>
+                                    </div>
+                                    <a href="{% url 'packages:package_detail' pkg.pk %}" class="btn btn-outline-primary btn-sm w-100 mt-3">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-light border text-center py-4">
+                        <i class="bi bi-backpack text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted mb-0">No active tour packages available right now. Check back soon!</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Why Choose AetherVoyage -->
+<div class="container my-5 py-4">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="brand-font mb-3">Refined travel planning. Intentionally crafted journeys.</h2>
+            <p class="text-muted-custom mb-4">AetherVoyage is an independent travel company that believes travel should be about genuine exploration. We combine hand-selected local destinations with modern AI-driven itinerary customization to give you the perfect balance of a pre-planned package and a custom travel document.</p>
+            
+            <div class="row g-4">
+                <div class="col-sm-6">
+                    <div class="d-flex gap-3">
+                        <div class="text-primary fs-3"><i class="bi bi-shield-check"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Hand-Selected Packages</h6>
+                            <p class="text-muted-custom small mb-0">Every tour package is reviewed by our agents for high quality and authentic experience.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="d-flex gap-3">
+                        <div class="text-primary fs-3"><i class="bi bi-cpu"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Smart AI Customization</h6>
+                            <p class="text-muted-custom small mb-0">Convert package blueprints or write custom inputs to get fully scheduled PDF-ready planners.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 offset-lg-1">
+            <!-- AI Itinerary Feature (Rule 12: Clean travel planning tool layout preview) -->
+            <div class="card p-4 border shadow-sm">
+                <h4 class="brand-font mb-3"><i class="bi bi-magic me-2 text-accent"></i>AI Travel Planner</h4>
+                <p class="text-muted-custom small">Generate a day-by-day itinerary instantly. Tailor it to your budget category, duration, travel style, and specific activities.</p>
+                <hr>
+                <div class="small mb-3">
+                    <span class="badge bg-light text-dark border me-1"><i class="bi bi-tag-fill text-accent me-1"></i>Budget Category</span>
+                    <span class="badge bg-light text-dark border me-1"><i class="bi bi-bicycle text-accent me-1"></i>Adventure</span>
+                    <span class="badge bg-light text-dark border"><i class="bi bi-clock-history text-accent me-1"></i>3-14 Days</span>
+                </div>
+                <a href="{% url 'ai_itinerary:itinerary_planner' %}" class="btn btn-primary w-100">Open AI Planner</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Reviews (Rule 8) -->
+<div class="bg-light py-5 border-top">
+    <div class="container">
+        <h2 class="brand-font text-center mb-1">What Our Travelers Say</h2>
+        <p class="text-muted-custom text-center small mb-5">Honest reviews from customers who booked packages with us.</p>
+        
+        <div class="row">
+            {% if recent_reviews %}
+                {% for review in recent_reviews %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                {% if review.user.profile_picture %}
+                                    <img src="{{ review.user.profile_picture.url }}" alt="{{ review.user.username }}" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
+                                {% else %}
+                                    <i class="bi bi-person-circle text-secondary fs-1"></i>
+                                {% endif %}
+                                <div>
+                                    <h6 class="fw-bold mb-0">{{ review.user.username }}</h6>
+                                    <span class="text-muted-custom small">Reviewed <a href="{% url 'packages:package_detail' review.package.pk %}" class="text-decoration-underline">{{ review.package.title }}</a></span>
+                                </div>
+                            </div>
+                            <div class="text-warning mb-2">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="card-text small text-muted-custom italic">"{{ review.comment|truncatewords:30 }}"</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="text-muted-custom small">No customer reviews yet. Be the first to book and leave a review!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,340 @@
+/* AetherVoyage Global Custom Stylesheet */
+
+/* Fonts - Import Inter and Playfair Display */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+    /* Color Palette */
+    --color-primary: #1a365d;         /* Deep Navy Blue */
+    --color-primary-hover: #0f2544;
+    --color-accent: #b45309;          /* Warm Ochre/Gold */
+    --color-accent-hover: #92400e;
+    --color-bg-base: #f8fafc;         /* Soft Off-White */
+    --color-bg-card: #ffffff;         /* Pure White */
+    --color-text-main: #1f2937;       /* Charcoal */
+    --color-text-muted: #6b7280;      /* Muted Gray */
+    --color-border: #e2e8f0;          /* Thin Gray Border */
+    --color-success: #15803d;         /* Forest Green */
+    --color-warning: #b45309;         /* Amber */
+    --color-error: #b91c1c;           /* Crimson Red */
+}
+
+/* Base resets & typography */
+body {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.15s ease-in-out;
+}
+
+a:hover {
+    color: var(--color-accent);
+}
+
+/* Restrained Bootstrap Customizations */
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+    background-color: var(--color-primary-hover) !important;
+    border-color: var(--color-primary-hover) !important;
+}
+
+.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    border-radius: 4px;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.btn-accent {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border: 1px solid var(--color-accent);
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.btn-accent:hover {
+    background-color: var(--color-accent-hover);
+    color: #ffffff;
+    border-color: var(--color-accent-hover);
+}
+
+/* Cards & Layout Containers */
+.card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card-img-top {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    object-fit: cover;
+}
+
+/* Typography styles */
+.text-muted-custom {
+    color: var(--color-text-muted);
+}
+
+.text-accent {
+    color: var(--color-accent) !important;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+/* Navigation layout */
+.navbar-custom {
+    background-color: var(--color-bg-card);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.75rem 1.5rem;
+}
+
+.navbar-custom .navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.navbar-custom .nav-link {
+    color: var(--color-text-main);
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active {
+    color: var(--color-accent);
+}
+
+/* Hero Section (restrained, no glassmorphism or floating shapes) */
+.hero-section {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 480px;
+    display: flex;
+    align-items: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, rgba(26, 54, 93, 0.9) 30%, rgba(26, 54, 93, 0.3) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+    max-width: 600px;
+}
+
+.hero-content h1 {
+    color: #ffffff;
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+}
+
+/* Travel Assistant Sidebar Drawer */
+.chatbot-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.chatbot-btn {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+}
+
+.chatbot-btn:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.chatbot-drawer {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 360px;
+    height: 480px;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.chatbot-header {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chatbot-header .close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.chatbot-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f8fafc;
+}
+
+.chat-bubble {
+    margin-bottom: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    max-width: 85%;
+    font-size: 0.9rem;
+}
+
+.chat-bubble-assistant {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-main);
+    align-self: flex-start;
+}
+
+.chat-bubble-user {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.chatbot-input-area {
+    padding: 0.75rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    gap: 8px;
+}
+
+.chatbot-input-area input {
+    flex: 1;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.chatbot-input-area input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.chatbot-input-area button {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+}
+
+.chatbot-input-area button:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/* Tables & Lists style overrides */
+.table-custom {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+}
+
+.table-custom th {
+    background-color: #f1f5f9;
+    color: var(--color-primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-border);
+}
+
+/* Custom Alert Styling */
+.alert-custom {
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+}
+.alert-custom-success {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+    color: var(--color-success);
+}
+.alert-custom-info {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+    color: var(--color-primary);
+}
+.alert-custom-warning {
+    background-color: #fffbeb;
+    border-color: #fef3c7;
+    color: var(--color-warning);
+}
+.alert-custom-error {
+    background-color: #fef2f2;
+    border-color: #fee2e2;
+    color: var(--color-error);
+}

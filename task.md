@@ -13,36 +13,36 @@
 - [x] Create access decorators and mixins for role-based views
 
 ## Phase 3: Travel Management
-- [/] Build models: `Destination`, `TourPackage`, and `Review`
-- [/] Create django-admin panels for managing destinations and packages
-- [/] Build CRUD views for destinations and tour packages (accessible by Staff/Admin)
-- [/] Implement list and details views for packages (accessible by Customer) with search and filters
+- [x] Build models: `Destination`, `TourPackage`, and `Review`
+- [x] Create django-admin panels for managing destinations and packages
+- [x] Build CRUD views for destinations and tour packages (accessible by Staff/Admin)
+- [x] Implement list and details views for packages (accessible by Customer) with search and filters
 
 ## Phase 4: Booking System
-- [ ] Build `Booking` model
-- [ ] Implement booking creation checkout form (dynamic price calculations, availability checks)
-- [ ] Create booking cancellation/updates for customers
-- [ ] Build approval workflow and status management for Staff/Admin
+- [x] Build `Booking` model
+- [x] Implement booking creation checkout form (dynamic price calculations, availability checks)
+- [x] Create booking cancellation/updates for customers
+- [x] Build approval workflow and status management for Staff/Admin
 
 ## Phase 5: AI Itinerary Module
-- [ ] Design travel preferences form (destination, days, budget tier, travel style, interests)
-- [ ] Implement Gemini API connector service for generating structured itinerary
-- [ ] Create view to generate, display, and save custom itineraries to the database
+- [x] Design travel preferences form (destination, days, budget tier, travel style, interests)
+- [x] Implement Gemini API connector service for generating structured itinerary
+- [x] Create view to generate, display, and save custom itineraries to the database
 
 ## Phase 6: Extra AI Features
 - [ ] Implement AI Destination Recommendation feature
-- [ ] Implement AI Travel Budget Estimator
-- [ ] Implement AI Packing List Generator
-- [ ] Build a floating AI Travel Chatbot sidebar widget with AJAX endpoints
+- [x] Implement AI Travel Budget Estimator
+- [x] Implement AI Packing List Generator
+- [x] Build a floating AI Travel Chatbot sidebar widget with AJAX endpoints
 
 ## Phase 7: Dashboards & UI Polish
-- [ ] Create Customer Dashboard (recent bookings, saved itineraries, review history)
-- [ ] Create Staff Dashboard (pending bookings, packages list, dest list)
-- [ ] Create Admin Dashboard (aggregate stats: total bookings, total revenue, user count)
+- [x] Create Customer Dashboard (recent bookings, saved itineraries, review history)
+- [x] Create Staff Dashboard (pending bookings, packages list, dest list)
+- [x] Create Admin Dashboard (aggregate stats: total bookings, total revenue, user count)
 - [ ] Integrate Chart.js in dashboards for visualization
-- [ ] Design premium, fully responsive Bootstrap-based UI with bespoke custom dark-theme stylesheets and CSS animations
+- [x] Design premium, fully responsive Bootstrap-based UI with bespoke custom stylesheets and CSS animations
 
 ## Phase 8: Finalization & Verification
-- [ ] Implement downloadable PDF itineraries using `xhtml2pdf`
-- [ ] Write and run automated tests for role permissions and model relationships
+- [x] Implement downloadable PDF itineraries using `xhtml2pdf`
+- [x] Write and run automated tests for role permissions and model relationships
 - [ ] Write final README with documentation and setup instructions

@@ -12,7 +12,7 @@ def get_gemini_model():
     try:
         genai.configure(api_key=api_key)
         # Using a stable, recommended model
-        return genai.GenerativeModel('gemini-1.5-flash')
+        return genai.GenerativeModel('gemini-3.5-flash')
     except Exception as e:
         print(f"Error configuring Gemini: {e}")
         return None

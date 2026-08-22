@@ -33,6 +33,10 @@
                         <div class="d-flex gap-2 mt-auto pt-3 border-top">
                             <a href="{% url 'ai_itinerary:itinerary_detail' itin.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">View Plan</a>
                             <a href="{% url 'ai_itinerary:download_itinerary_pdf' itin.pk %}" class="btn btn-light btn-sm px-2 border" title="Download PDF"><i class="bi bi-file-pdf text-danger"></i></a>
+                            <form action="{% url 'ai_itinerary:itinerary_delete' itin.pk %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this itinerary?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-light btn-sm px-2 border text-danger" title="Delete Itinerary"><i class="bi bi-trash"></i></button>
+                            </form>
                         </div>
                     </div>
                 </div>

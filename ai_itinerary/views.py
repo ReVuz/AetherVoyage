@@ -124,6 +124,21 @@ def download_itinerary_pdf(request, pk):
 
 @login_required
 @csrf_exempt
+def itinerary_delete(request, pk):
+    """
+    Deletes a saved itinerary if the user owns it.
+    """
+    if request.method == 'POST':
+        itinerary = get_object_or_404(SavedItinerary, pk=pk)
+        if itinerary.user == request.user or request.user.is_staff or request.user.role == 'admin':
+            itinerary.delete()
+            messages.success(request, "Itinerary deleted successfully.")
+        else:
+            messages.error(request, "You do not have permission to delete this itinerary.")
+    return redirect('ai_itinerary:itinerary_list')
+
+@login_required
+@csrf_exempt
 def chat_api(request):
     """
     AJAX endpoint for user conversations with the Travel Assistant.

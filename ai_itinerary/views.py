@@ -89,34 +89,38 @@ def itinerary_detail(request, pk):
 @login_required
 def download_itinerary_pdf(request, pk):
     """
-    Generates a printable PDF download from the saved itinerary.
+    Generates a premium PDF brochure for the saved itinerary.
+    The destination cover image is fetched server-side and embedded as
+    a base64 data URI so xhtml2pdf can render it without any network call.
     """
     itinerary = get_object_or_404(SavedItinerary, pk=pk)
-    
-    # Restrict to owner
-    if itinerary.user != request.user and not request.user.is_staff and not request.user.role == 'admin':
+
+    # Permission check: only owner, staff, or admin
+    if itinerary.user != request.user and not request.user.is_staff and not getattr(request.user, 'role', '') == 'admin':
         return HttpResponse("Unauthorized", status=403)
-        
+
+    # Fetch destination image as an embedded base64 data URI
+    cover_image_uri = services.get_destination_image_b64(itinerary.destination)
+
     context = {
         'itinerary': itinerary,
         'user': request.user,
+        'cover_image_uri': cover_image_uri,
     }
-    
-    # Load PDF HTML template
+
     template = get_template('ai_itinerary/itinerary_pdf_template.html')
     html = template.render(context)
-    
-    # Create file-like buffer for PDF
+
     result = io.BytesIO()
-    pdf = pisa.pisaDocument(io.BytesIO(html.encode("utf-8")), result)
-    
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode('utf-8')), result)
+
     if not pdf.err:
         response = HttpResponse(result.getvalue(), content_type='application/pdf')
-        filename = f"itinerary_{itinerary.destination.lower().replace(' ', '_')}.pdf"
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        safe_dest = itinerary.destination.lower().replace(' ', '_').replace(',', '')
+        response['Content-Disposition'] = f'attachment; filename="aethervoyage_{safe_dest}_itinerary.pdf"'
         return response
-        
-    return HttpResponse("Failed to generate PDF.", status=500)
+
+    return HttpResponse(f"PDF generation failed. Please try again.", status=500)
 
 @login_required
 @csrf_exempt

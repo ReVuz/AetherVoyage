@@ -1,5 +1,90 @@
+import base64
+import hashlib
+import requests
 from django.conf import settings
 from google import genai
+
+# ---------------------------------------------------------------------------
+# Destination image helper (for PDF brochures)
+# ---------------------------------------------------------------------------
+
+# A curated map of popular destinations to specific Unsplash/Picsum seeds
+# that are known to look like real travel photos. Picsum Photos is 100% free
+# and openly licensed — no API key required.
+_DESTINATION_SEED_MAP = {
+    'paris':       'paris-eiffel',
+    'rome':        'rome-colosseum',
+    'tokyo':       'tokyo-city',
+    'kyoto':       'kyoto-temple',
+    'london':      'london-bridge',
+    'new york':    'new-york-skyline',
+    'barcelona':   'barcelona-sagrada',
+    'amsterdam':   'amsterdam-canal',
+    'istanbul':    'istanbul-mosque',
+    'dubai':       'dubai-skyline',
+    'singapore':   'singapore-marina',
+    'bali':        'bali-temple',
+    'sydney':      'sydney-opera',
+    'santorini':   'santorini-blue',
+    'maldives':    'maldives-ocean',
+    'swiss':       'swiss-alps',
+    'switzerland': 'swiss-alps',
+    'new zealand': 'newzealand-fjord',
+    'iceland':     'iceland-aurora',
+    'egypt':       'egypt-pyramid',
+    'india':       'india-taj',
+    'taj mahal':   'india-taj',
+    'thailand':    'thailand-temple',
+    'bangkok':     'bangkok-temple',
+    'prague':      'prague-castle',
+    'vienna':      'vienna-palace',
+    'madrid':      'madrid-plaza',
+    'lisbon':      'lisbon-tram',
+    'marrakech':   'marrakech-medina',
+    'cape town':   'capetown-mountain',
+    'rio':         'rio-christ',
+    'machu picchu': 'peru-macchupicchu',
+    'venice':      'venice-canal',
+    'florence':    'florence-duomo',
+    'athens':      'athens-parthenon',
+    'hawaii':      'hawaii-beach',
+    'maldive':     'maldives-ocean',
+    'dubai':       'dubai-skyline',
+    'shanghai':    'shanghai-skyline',
+    'hong kong':   'hongkong-skyline',
+    'seoul':       'seoul-palace',
+    'mexico':      'mexico-pyramid',
+}
+
+
+def get_destination_image_b64(destination: str, width: int = 800, height: int = 380) -> str | None:
+    """
+    Fetches a real travel photograph for the given destination and returns it
+    as a base64-encoded JPEG data URI (e.g. 'data:image/jpeg;base64,...').
+    Uses Picsum Photos (https://picsum.photos) — completely open and free.
+    Returns None on failure so callers can gracefully omit the image.
+    """
+    dest_lower = destination.lower().strip()
+
+    # Pick a seed: check our curated map first, otherwise derive one from the name
+    seed = None
+    for key, val in _DESTINATION_SEED_MAP.items():
+        if key in dest_lower:
+            seed = val
+            break
+    if not seed:
+        # Fallback: use a short hash of the destination as a deterministic seed
+        seed = hashlib.md5(dest_lower.encode()).hexdigest()[:8]
+
+    url = f'https://picsum.photos/seed/{seed}/{width}/{height}'
+    try:
+        resp = requests.get(url, timeout=10, headers={'User-Agent': 'AetherVoyage/1.0'}, allow_redirects=True)
+        if resp.status_code == 200 and 'image' in resp.headers.get('content-type', ''):
+            b64 = base64.b64encode(resp.content).decode('utf-8')
+            return f'data:image/jpeg;base64,{b64}'
+    except Exception as e:
+        print(f'Image fetch failed for "{destination}": {e}')
+    return None
 
 # ---------------------------------------------------------------------------
 # Gemini client factory

@@ -1,81 +1,233 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <style>
+        /* -------------------------------------------------------
+           xhtml2pdf-compatible CSS
+           NOTE: @page margin boxes (e.g. @bottom-right) are NOT
+           supported by xhtml2pdf — page numbers are omitted here.
+        -------------------------------------------------------- */
         @page {
             size: letter;
-            margin: 1.0in;
-            @bottom-right {
-                content: "Page " counter(page);
-                font-family: Helvetica, sans-serif;
-                font-size: 9pt;
-                color: #64748b;
-            }
+            margin: 0.75in;
         }
+
         body {
-            font-family: Helvetica, sans-serif;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 10.5pt;
-            line-height: 1.5;
+            line-height: 1.55;
+            color: #334155;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ── Cover Header ─────────────────────────────────────── */
+        .cover-header {
+            margin-bottom: 18pt;
+        }
+
+        .cover-image-wrap {
+            width: 504px;
+            height: 200px;
+            overflow: hidden;
+            margin-bottom: 14pt;
+        }
+
+        .cover-image-wrap img {
+            width: 504px;
+            height: 200px;
+        }
+
+        .brand-line {
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b45309;
+            margin-bottom: 4pt;
+        }
+
+        .title-destination {
+            font-size: 26pt;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin: 0 0 4pt 0;
+            line-height: 1.15;
+        }
+
+        .subtitle-meta {
+            font-size: 10pt;
+            color: #64748b;
+            border-bottom: 1.5px solid #1e3a8a;
+            padding-bottom: 8pt;
+            margin-bottom: 0;
+        }
+
+        /* ── Section Titles ───────────────────────────────────── */
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1e3a8a;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 4pt;
+            margin-top: 20pt;
+            margin-bottom: 10pt;
+        }
+
+        /* ── Day headings from Gemini HTML ────────────────────── */
+        h3 {
+            font-size: 12pt;
+            color: #b45309;
+            margin-top: 14pt;
+            margin-bottom: 5pt;
+        }
+
+        h5 {
+            font-size: 11pt;
+            color: #b45309;
+            margin-top: 10pt;
+            margin-bottom: 4pt;
+        }
+
+        /* ── Body text ────────────────────────────────────────── */
+        p {
+            margin-top: 0;
+            margin-bottom: 7pt;
+        }
+
+        ul {
+            margin-top: 2pt;
+            margin-bottom: 8pt;
+            padding-left: 18px;
+        }
+
+        li {
+            margin-bottom: 3pt;
+        }
+
+        strong {
+            color: #1e293b;
+        }
+
+        /* ── Info bar (trip summary box) ──────────────────────── */
+        .info-bar {
+            background-color: #f0f4ff;
+            border-left: 3px solid #1e3a8a;
+            padding: 8pt 12pt;
+            margin-bottom: 14pt;
+            font-size: 9.5pt;
+        }
+
+        .info-bar td {
+            padding: 2pt 16pt 2pt 0;
             color: #334155;
         }
-        h1, h2, h3, h4, h5 {
-            color: #1e3a8a; /* Deep Navy */
+
+        .info-label {
+            font-weight: bold;
+            color: #1e3a8a;
+            white-space: nowrap;
         }
-        h1 {
-            font-size: 22pt;
-            margin-bottom: 4pt;
+
+        /* ── Footer ───────────────────────────────────────────── */
+        .pdf-footer {
+            margin-top: 24pt;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 8pt;
+            font-size: 8pt;
+            color: #94a3b8;
+            text-align: center;
         }
-        .subtitle {
-            font-size: 11pt;
-            color: #64748b;
-            margin-bottom: 20pt;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 8pt;
+
+        /* ── Two-column layout for budget + packing ──────────── */
+        .two-col {
+            width: 100%;
         }
-        .section-title {
-            font-size: 15pt;
-            border-bottom: 2px solid #1e3a8a;
-            padding-bottom: 4pt;
-            margin-top: 25pt;
-            margin-bottom: 12pt;
+        .two-col td {
+            vertical-align: top;
+            padding-right: 16pt;
+            width: 50%;
         }
-        h3, h5 {
-            font-size: 13pt;
-            color: #b45309; /* Warm Ochre */
-            margin-top: 15pt;
-            margin-bottom: 6pt;
-        }
-        p {
-            margin-bottom: 8pt;
-        }
-        ul {
-            margin-top: 4pt;
-            margin-bottom: 10pt;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 4pt;
+        .two-col td:last-child {
+            padding-right: 0;
         }
     </style>
 </head>
 <body>
-    <h1>AetherVoyage Custom Itinerary</h1>
-    <div class="subtitle">
-        <strong>Destination:</strong> {{ itinerary.destination }} &bull; 
-        <strong>Duration:</strong> {{ itinerary.duration_days }} Days &bull; 
-        <strong>Travel Style:</strong> {{ itinerary.travel_style|title }}<br>
-        <strong>Traveler:</strong> {{ user.username }} &bull; 
-        <strong>Generated:</strong> {{ itinerary.created_at|date:"M d, Y" }}
+
+    <!-- ─── COVER HEADER ───────────────────────────────────── -->
+    <div class="cover-header">
+
+        {% if cover_image_uri %}
+        <div class="cover-image-wrap">
+            <img src="{{ cover_image_uri }}" alt="{{ itinerary.destination }}">
+        </div>
+        {% endif %}
+
+        <div class="brand-line">AetherVoyage &nbsp;&bull;&nbsp; Custom Travel Brochure</div>
+        <h1 class="title-destination">{{ itinerary.destination }}</h1>
+        <div class="subtitle-meta">
+            Prepared for <strong>{{ user.username }}</strong>
+            &nbsp;&bull;&nbsp;
+            Generated on {{ itinerary.created_at|date:"F j, Y" }}
+        </div>
     </div>
 
-    <div class="section-title">Day-by-Day Schedule</div>
+    <!-- ─── TRIP SUMMARY BAR ───────────────────────────────── -->
+    <div class="info-bar">
+        <table>
+            <tr>
+                <td class="info-label">Duration:</td>
+                <td>{{ itinerary.duration_days }} Days</td>
+                <td class="info-label">Budget:</td>
+                <td>{{ itinerary.get_budget_category_display }}</td>
+                <td class="info-label">Style:</td>
+                <td>{{ itinerary.get_travel_style_display }}</td>
+            </tr>
+            {% if itinerary.interests %}
+            <tr>
+                <td class="info-label">Interests:</td>
+                <td colspan="5">{{ itinerary.interests }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+
+    <!-- ─── DAY-BY-DAY SCHEDULE ────────────────────────────── -->
+    <div class="section-title">Day-by-Day Travel Schedule</div>
     {{ itinerary.itinerary_content|safe }}
 
-    <div class="section-title">Estimated Budget Breakdown</div>
-    {{ itinerary.budget_estimate|safe }}
+    <!-- ─── BUDGET & PACKING (two columns) ─────────────────── -->
+    <table class="two-col">
+        <tr>
+            <td>
+                <div class="section-title">Estimated Budget</div>
+                <div style="font-size:9.5pt;">
+                    {% if itinerary.budget_estimate %}
+                        {{ itinerary.budget_estimate|safe }}
+                    {% else %}
+                        <p>No budget data available.</p>
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                <div class="section-title">Packing Checklist</div>
+                <div style="font-size:9.5pt;">
+                    {% if itinerary.packing_list %}
+                        {{ itinerary.packing_list|safe }}
+                    {% else %}
+                        <p>No packing list available.</p>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
 
-    <div class="section-title">Recommended Packing Checklist</div>
-    {{ itinerary.packing_list|safe }}
+    <!-- ─── FOOTER ─────────────────────────────────────────── -->
+    <div class="pdf-footer">
+        AetherVoyage &bull; Premium Travel Planning &bull; info@aethervoyage.com
+        &bull; This brochure was generated using AI-assisted planning tools.
+    </div>
+
 </body>
 </html>

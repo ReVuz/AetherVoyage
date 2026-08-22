@@ -55,7 +55,7 @@
                                             <div class="text-muted-custom" style="font-size: 0.75rem;">Dates: {{ pkg.start_date|date:"y/m/d" }} - {{ pkg.end_date|date:"y/m/d" }}</div>
                                         </td>
                                         <td>{{ pkg.destination.name }}, {{ pkg.destination.location }}</td>
-                                        <td class="fw-semibold">${{ pkg.price }}</td>
+                                        <td class="fw-semibold">₹{{ pkg.price }}</td>
                                         <td>{{ pkg.duration_days }} Days</td>
                                         <td>
                                             <span class="{% if pkg.available_slots == 0 %}text-danger fw-bold{% else %}text-dark{% endif %}">{{ pkg.available_slots }}</span> / {{ pkg.max_slots }}

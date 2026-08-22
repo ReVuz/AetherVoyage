@@ -38,7 +38,7 @@
         <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
             <div class="card p-3 border text-center shadow-sm">
                 <span class="text-uppercase text-muted-custom small fw-semibold">Gross Revenue</span>
-                <h3 class="brand-font my-2 text-accent">${{ stats.total_revenue|floatformat:2 }}</h3>
+                <h3 class="brand-font my-2 text-accent">₹{{ stats.total_revenue|floatformat:2 }}</h3>
                 <span class="small text-muted-custom">From approved reservations</span>
             </div>
         </div>
@@ -123,7 +123,7 @@
                                         <div class="text-muted-custom small"><i class="bi bi-geo-alt me-1"></i>{{ booking.package.destination.name }}</div>
                                     </td>
                                     <td>{{ booking.number_of_travelers }}</td>
-                                    <td class="fw-semibold text-accent">${{ booking.total_price|floatformat:2 }}</td>
+                                    <td class="fw-semibold text-accent">₹{{ booking.total_price|floatformat:2 }}</td>
                                     <td>
                                         {% if booking.status == 'pending' %}
                                             <span class="badge bg-warning-subtle text-warning border">Pending Review</span>

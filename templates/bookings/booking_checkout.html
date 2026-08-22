@@ -29,7 +29,7 @@
                                 <h6 class="fw-bold mb-2">Price Breakdown</h6>
                                 <div class="d-flex justify-content-between small text-muted-custom mb-1">
                                     <span>Price per traveler:</span>
-                                    <span class="fw-semibold text-dark">${{ package.price|floatformat:2 }}</span>
+                                    <span class="fw-semibold text-dark">₹{{ package.price|floatformat:2 }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between small text-muted-custom mb-1">
                                     <span>Traveler quantity:</span>
@@ -38,7 +38,7 @@
                                 <hr class="my-2">
                                 <div class="d-flex justify-content-between fw-bold">
                                     <span>Total Price:</span>
-                                    <span class="text-accent" id="summaryTotal">${{ package.price|floatformat:2 }}</span>
+                                    <span class="text-accent" id="summaryTotal">₹{{ package.price|floatformat:2 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
             
             summaryQty.textContent = qty;
             const total = pricePerTraveler * qty;
-            summaryTotal.textContent = '$' + total.toFixed(2);
+            summaryTotal.textContent = '₹' + total.toFixed(2);
         });
     });
 </script>

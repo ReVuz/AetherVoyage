@@ -23,7 +23,7 @@
         <div class="col-md-4 mb-3 mb-md-0">
             <div class="card p-3 border text-center shadow-sm">
                 <span class="text-uppercase text-muted-custom small fw-semibold" style="letter-spacing: 0.05em;">Approved Travel Spend</span>
-                <h3 class="brand-font my-2 text-accent">${{ stats.total_spent|floatformat:2 }}</h3>
+                <h3 class="brand-font my-2 text-accent">₹{{ stats.total_spent|floatformat:2 }}</h3>
                 <span class="small text-muted-custom">Confirmed bookings only</span>
             </div>
         </div>
@@ -66,7 +66,7 @@
                                     </td>
                                     <td>{{ booking.package.start_date|date:"M d, Y" }}</td>
                                     <td>{{ booking.number_of_travelers }} traveler{{ booking.number_of_travelers|pluralize }}</td>
-                                    <td class="fw-semibold text-accent">${{ booking.total_price|floatformat:2 }}</td>
+                                    <td class="fw-semibold text-accent">₹{{ booking.total_price|floatformat:2 }}</td>
                                     <td>
                                         {% if booking.status == 'pending' %}
                                             <span class="badge bg-warning-subtle text-warning border">Pending Review</span>

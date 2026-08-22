@@ -72,7 +72,7 @@
                                         <div class="text-muted-custom small"><i class="bi bi-geo-alt me-1"></i>{{ booking.package.destination.name }} (slots: {{ booking.package.available_slots }} left)</div>
                                     </td>
                                     <td>{{ booking.number_of_travelers }}</td>
-                                    <td class="fw-semibold text-accent">${{ booking.total_price|floatformat:2 }}</td>
+                                    <td class="fw-semibold text-accent">₹{{ booking.total_price|floatformat:2 }}</td>
                                     <td>{{ booking.booking_date|date:"Y-m-d H:i" }}</td>
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
@@ -124,7 +124,7 @@
                                 <tr>
                                     <td><a href="{% url 'packages:package_detail' pkg.pk %}" class="fw-semibold text-decoration-none">{{ pkg.title }}</a></td>
                                     <td>{{ pkg.destination.name }}, {{ pkg.destination.location }}</td>
-                                    <td class="fw-semibold">${{ pkg.price }}</td>
+                                    <td class="fw-semibold">₹{{ pkg.price }}</td>
                                     <td>{{ pkg.duration_days }} Days</td>
                                     <td>{{ pkg.available_slots }} / {{ pkg.max_slots }}</td>
                                 </tr>

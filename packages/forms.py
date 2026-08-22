@@ -6,8 +6,8 @@ class DestinationForm(forms.ModelForm):
         model = Destination
         fields = ['name', 'location', 'description', 'image']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Kyoto'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Japan'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Munnar'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Kerala, India'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
@@ -22,7 +22,7 @@ class TourPackageForm(forms.ModelForm):
         ]
         widgets = {
             'destination': forms.Select(attrs={'class': 'form-select'}),
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Historic Kyoto Cultural Tour'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Historic Munnar Tea Garden Tour'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'duration_days': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),

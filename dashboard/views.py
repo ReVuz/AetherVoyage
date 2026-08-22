@@ -1,7 +1,9 @@
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from django.db.models import Sum
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
 from accounts.decorators import admin_required, staff_required, customer_required
 
 from bookings.models import Booking
@@ -69,11 +71,35 @@ def staff_dashboard(request):
 @admin_required
 def admin_dashboard(request):
     """
-    Retrieve global system stats (users count, bookings, gross approved revenue).
+    Retrieve global system stats, monthly booking trends, and popular destinations.
+    Passes chart-ready JSON data to the template.
     """
     recent_bookings = Booking.objects.all().select_related('user', 'package', 'package__destination')[:10]
     total_revenue = Booking.objects.filter(status='approved').aggregate(Sum('total_price'))['total_price__sum'] or 0.0
-    
+
+    # --- Chart 1: Monthly Bookings Volume (last 6 months) ---
+    monthly_qs = (
+        Booking.objects
+        .annotate(month=TruncMonth('booking_date'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+    # Keep last 6 data points
+    monthly_qs = list(monthly_qs)[-6:]
+    monthly_labels = [m['month'].strftime('%b %Y') for m in monthly_qs]
+    monthly_data   = [m['count'] for m in monthly_qs]
+
+    # --- Chart 2: Top 5 Popular Destinations by bookings ---
+    top_destinations_qs = (
+        Booking.objects
+        .values('package__destination__name')
+        .annotate(booking_count=Count('id'))
+        .order_by('-booking_count')[:5]
+    )
+    dest_labels = [d['package__destination__name'] or 'Unknown' for d in top_destinations_qs]
+    dest_data   = [d['booking_count'] for d in top_destinations_qs]
+
     context = {
         'recent_bookings': recent_bookings,
         'stats': {
@@ -81,6 +107,11 @@ def admin_dashboard(request):
             'total_bookings': Booking.objects.count(),
             'total_revenue': total_revenue,
             'packages_count': TourPackage.objects.count(),
-        }
+        },
+        # JSON-encoded chart data (safe to inject into <script> tags)
+        'chart_monthly_labels': json.dumps(monthly_labels),
+        'chart_monthly_data':   json.dumps(monthly_data),
+        'chart_dest_labels':    json.dumps(dest_labels),
+        'chart_dest_data':      json.dumps(dest_data),
     }
     return render(request, 'dashboard/admin_dashboard.html', context)

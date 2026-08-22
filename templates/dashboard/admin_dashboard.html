@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 {% block title %}Admin Dashboard - AetherVoyage{% endblock %}
 
+{% block extra_css %}
+<style>
+    .chart-card {
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: #fff;
+        padding: 1.25rem 1.5rem;
+    }
+    .chart-card h6 {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -14,8 +33,8 @@
         </div>
     </div>
 
-    <!-- Stats row (Rule 15: Conventional stats card layouts) -->
-    <div class="row mb-5">
+    <!-- Stats row -->
+    <div class="row mb-4">
         <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
             <div class="card p-3 border text-center shadow-sm">
                 <span class="text-uppercase text-muted-custom small fw-semibold">Gross Revenue</span>
@@ -34,7 +53,7 @@
             <div class="card p-3 border text-center shadow-sm">
                 <span class="text-uppercase text-muted-custom small fw-semibold">Registered Users</span>
                 <h3 class="brand-font my-2 text-success">{{ stats.total_users }}</h3>
-                <span class="small text-muted-custom">Customers, staff & admins</span>
+                <span class="small text-muted-custom">Customers, staff &amp; admins</span>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
@@ -46,7 +65,32 @@
         </div>
     </div>
 
-    <!-- Recent Bookings Table (Rule 15: Tables for administrative records) -->
+    <!-- Charts row -->
+    <div class="row mb-4">
+        <!-- Monthly Bookings Bar Chart -->
+        <div class="col-md-7 mb-4 mb-md-0">
+            <div class="chart-card h-100">
+                <h6>Monthly Booking Volume</h6>
+                <canvas id="monthlyBookingsChart" height="120"></canvas>
+                {% if not chart_monthly_labels or chart_monthly_labels == '[]' %}
+                    <p class="text-muted-custom small text-center mt-3 mb-0">No booking data available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Popular Destinations Doughnut Chart -->
+        <div class="col-md-5">
+            <div class="chart-card h-100">
+                <h6>Top Destinations by Bookings</h6>
+                <canvas id="popularDestinationsChart" height="120"></canvas>
+                {% if not chart_dest_labels or chart_dest_labels == '[]' %}
+                    <p class="text-muted-custom small text-center mt-3 mb-0">No destination data available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings Table -->
     <div class="card border">
         <div class="card-header bg-white py-3">
             <h5 class="brand-font mb-0">Recent Booking Activity (Last 10 Records)</h5>
@@ -104,4 +148,103 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    // Colour palette aligned with our slate/navy brand (Rule 14 — consistent, restrained colour use)
+    const NAVY  = '#1a365d';
+    const OCHRE = '#b45309';
+    const SLATE_SHADES = ['#1a365d', '#2a4f82', '#3b6aab', '#5885c4', '#84a8d9', '#b0c7ea'];
+
+    // --- Chart 1: Monthly Bookings Bar Chart ---
+    const monthlyCtx = document.getElementById('monthlyBookingsChart');
+    if (monthlyCtx) {
+        const monthlyLabels = {{ chart_monthly_labels|safe }};
+        const monthlyData   = {{ chart_monthly_data|safe }};
+
+        if (monthlyLabels.length > 0) {
+            new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [{
+                        label: 'Bookings',
+                        data: monthlyData,
+                        backgroundColor: NAVY,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ` ${ctx.parsed.y} booking${ctx.parsed.y !== 1 ? 's' : ''}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, color: '#6b7280', font: { size: 11 } },
+                            grid: { color: '#e2e8f0' }
+                        },
+                        x: {
+                            ticks: { color: '#6b7280', font: { size: 11 } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // --- Chart 2: Popular Destinations Doughnut ---
+    const destCtx = document.getElementById('popularDestinationsChart');
+    if (destCtx) {
+        const destLabels = {{ chart_dest_labels|safe }};
+        const destData   = {{ chart_dest_data|safe }};
+
+        if (destLabels.length > 0) {
+            new Chart(destCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: destLabels,
+                    datasets: [{
+                        data: destData,
+                        backgroundColor: SLATE_SHADES.slice(0, destLabels.length),
+                        borderWidth: 1,
+                        borderColor: '#fff',
+                        hoverOffset: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '55%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#1f2937',
+                                font: { size: 11 },
+                                padding: 12,
+                                boxWidth: 12,
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ` ${ctx.parsed} booking${ctx.parsed !== 1 ? 's' : ''}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>
 {% endblock %}

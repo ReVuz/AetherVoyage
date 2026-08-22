@@ -109,3 +109,14 @@ class DecoratorsTest(TestCase):
         request._messages = MockMessages()
         response = protected_view(request)
         self.assertEqual(response.status_code, 302)
+
+
+class CustomUserAdminTest(TestCase):
+    def setUp(self):
+        self.admin = CustomUser.objects.create_superuser(username='admin_user', email='admin@test.com', password='pass123')
+
+    def test_admin_add_user_view(self):
+        self.client.force_login(self.admin)
+        response = self.client.get('/admin/accounts/customuser/add/')
+        self.assertEqual(response.status_code, 200)
+

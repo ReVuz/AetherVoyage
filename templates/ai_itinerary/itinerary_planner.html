@@ -8,8 +8,10 @@
             <div class="card p-4">
                 <div class="card-body">
                     <!-- Heading hierarchy & custom class (Rule 5 & 12) -->
-                    <h2 class="card-title text-center mb-4 brand-font"><i class="bi bi-compass-fill me-2 text-accent"></i>AI Travel Planner</h2>
-                    <p class="text-center text-muted-custom small mb-4">Provide your travel details below and let our planner organize a custom day-by-day travel brochure.</p>
+                    <h2 class="card-title text-center mb-4 brand-font"><i
+                            class="bi bi-compass-fill me-2 text-accent"></i>AI Travel Planner</h2>
+                    <p class="text-center text-muted-custom small mb-4">Provide your travel details below and let our
+                        planner organize a custom day-by-day travel brochure.</p>
                     <hr class="mb-4">
 
                     <!-- Loading State Placeholder (Rule 16: simple loading status, no glowing AI effects) -->
@@ -18,16 +20,18 @@
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         <h5 class="brand-font">Building Your Custom Itinerary</h5>
-                        <p class="text-muted-custom small mb-0">Consulting regional details and planning activities. This may take up to 20 seconds...</p>
+                        <p class="text-muted-custom small mb-0">Consulting regional details and planning activities.
+                            This may take up to 20 seconds...</p>
                     </div>
 
                     <!-- Form Input Fields -->
                     <form method="post" id="plannerForm" onsubmit="showLoadingState()">
                         {% csrf_token %}
-                        
+
                         <div class="mb-3">
                             <label for="destination" class="form-label small fw-semibold">Target Destination</label>
-                            <input type="text" name="destination" id="destination" class="form-control" placeholder="e.g. Kerala, Tamilnadu, Varanasi" required>
+                            <input type="text" name="destination" id="destination" class="form-control"
+                                placeholder="e.g. Kochi, Kerala or Munnar, Kerala" required>
                             <div class="form-text text-muted-custom" style="font-size: 0.75rem;">
                                 Enter a city, region, or country.
                             </div>
@@ -36,14 +40,16 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="duration_days" class="form-label small fw-semibold">Duration (Days)</label>
-                                <input type="number" name="duration_days" id="duration_days" class="form-control" value="3" min="1" max="14" required>
+                                <input type="number" name="duration_days" id="duration_days" class="form-control"
+                                    value="3" min="1" max="14" required>
                                 <div class="form-text text-muted-custom" style="font-size: 0.75rem;">
                                     Planning up to 14 days maximum.
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6 mb-3">
-                                <label for="budget_category" class="form-label small fw-semibold">Budget Category</label>
+                                <label for="budget_category" class="form-label small fw-semibold">Budget
+                                    Category</label>
                                 <select name="budget_category" id="budget_category" class="form-select">
                                     <option value="budget">Budget-friendly</option>
                                     <option value="mid_range" selected>Mid-range</option>
@@ -64,12 +70,15 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="interests" class="form-label small fw-semibold">Specific Interests & Preferences (Optional)</label>
-                            <textarea name="interests" id="interests" class="form-control" rows="3" placeholder="e.g. Vegetarian restaurants, visiting museums, hiking trails, local artisan shops..."></textarea>
+                            <label for="interests" class="form-label small fw-semibold">Specific Interests & Preferences
+                                (Optional)</label>
+                            <textarea name="interests" id="interests" class="form-control" rows="3"
+                                placeholder="e.g. Vegetarian restaurants, visiting museums, hiking trails, local artisan shops..."></textarea>
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-accent py-2 fw-semibold"><i class="bi bi-cpu me-2"></i>Generate Itinerary</button>
+                            <button type="submit" class="btn btn-accent py-2 fw-semibold"><i
+                                    class="bi bi-cpu me-2"></i>Generate Itinerary</button>
                         </div>
                     </form>
                 </div>
@@ -84,11 +93,11 @@
     function showLoadingState() {
         const form = document.getElementById('plannerForm');
         const loading = document.getElementById('plannerLoading');
-        
+
         // Simple client-side field validation check
         const dest = document.getElementById('destination').value.trim();
         const days = parseInt(document.getElementById('duration_days').value);
-        
+
         if (dest && !isNaN(days) && days >= 1 && days <= 14) {
             form.classList.add('d-none');
             loading.classList.remove('d-none');

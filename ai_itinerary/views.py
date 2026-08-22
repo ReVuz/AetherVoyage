@@ -168,3 +168,19 @@ def chat_api(request):
     )
     
     return JsonResponse({'response': reply})
+
+@login_required
+def destination_recommendation(request):
+    """
+    Renders AI Destination Recommendation page and handles generation.
+    """
+    recommendations = None
+    if request.method == 'POST':
+        preferences = request.POST.get('preferences', '').strip()
+        if preferences:
+            recommendations = services.generate_destination_recommendation(preferences)
+        else:
+            messages.error(request, "Please enter your preferences.")
+            
+    return render(request, 'ai_itinerary/destination_recommendation.html', {'recommendations': recommendations})
+

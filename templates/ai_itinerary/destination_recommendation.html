@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}AI Destination Recommendation - AetherVoyage{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="brand-font mb-4 text-center">AI Destination Recommender</h2>
+            <div class="card p-4 border shadow-sm mb-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="preferences" class="form-label fw-bold">What kind of trip are you looking for?</label>
+                        <textarea class="form-control" id="preferences" name="preferences" rows="4" placeholder="e.g. A quiet beach with clear water, mostly relaxing, but with options for snorkeling." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Get Recommendations</button>
+                </form>
+            </div>
+            
+            {% if recommendations %}
+            <div class="card p-4 border shadow-sm">
+                <h4 class="brand-font mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Recommended Destinations</h4>
+                <div class="recommendation-content">
+                    {{ recommendations|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

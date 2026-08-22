@@ -30,7 +30,7 @@
 - [x] Create view to generate, display, and save custom itineraries to the database
 
 ## Phase 6: Extra AI Features
-- [ ] Implement AI Destination Recommendation feature
+- [x] Implement AI Destination Recommendation feature
 - [x] Implement AI Travel Budget Estimator
 - [x] Implement AI Packing List Generator
 - [x] Build a floating AI Travel Chatbot sidebar widget with AJAX endpoints
@@ -39,7 +39,7 @@
 - [x] Create Customer Dashboard (recent bookings, saved itineraries, review history)
 - [x] Create Staff Dashboard (pending bookings, packages list, dest list)
 - [x] Create Admin Dashboard (aggregate stats: total bookings, total revenue, user count)
-- [ ] Integrate Chart.js in dashboards for visualization
+- [x] Integrate Chart.js in dashboards for visualization
 - [x] Design premium, fully responsive Bootstrap-based UI with bespoke custom stylesheets and CSS animations
 
 ## Phase 8: Finalization & Verification

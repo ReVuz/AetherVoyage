@@ -251,6 +251,22 @@ def get_chatbot_reply(user_message, history=None):
         print(f"Gemini chatbot error: {e}")
         return get_mock_chatbot_response(user_message)
 
+def generate_destination_recommendation(preferences):
+    """
+    Generates destination recommendations based on user preferences.
+    """
+    client = get_gemini_client()
+    prompt = f"Recommend 3 travel destinations based on these preferences: {preferences}. Return the result in clean HTML format using <ul> and <li> tags, with a short description for each."
+    if not client:
+        return "<p><strong>1. Kyoto, Japan:</strong> Great cultural experience.<br><strong>2. Santorini, Greece:</strong> Beautiful views.<br><strong>3. Banff, Canada:</strong> Nature and hiking.</p>"
+    try:
+        response = client.models.generate_content(model=_MODEL, contents=prompt)
+        return _clean_html(response.text)
+    except Exception as e:
+        print(f"Gemini recommendation error: {e}")
+        return "<p>Recommendations are temporarily unavailable.</p>"
+
+
 
 # ---------------------------------------------------------------------------
 # Mock / fallback generators

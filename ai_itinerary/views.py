@@ -123,7 +123,6 @@ def download_itinerary_pdf(request, pk):
     return HttpResponse(f"PDF generation failed. Please try again.", status=500)
 
 @login_required
-@csrf_exempt
 def itinerary_delete(request, pk):
     """
     Deletes a saved itinerary if the user owns it.

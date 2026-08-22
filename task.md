@@ -45,4 +45,4 @@
 ## Phase 8: Finalization & Verification
 - [x] Implement downloadable PDF itineraries using `xhtml2pdf`
 - [x] Write and run automated tests for role permissions and model relationships
-- [ ] Write final README with documentation and setup instructions
+- [x] Write final README with documentation and setup instructions

@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import get_template
-from django.views.decorators.csrf import csrf_exempt
 from xhtml2pdf import pisa
 
 from .models import SavedItinerary, ChatHistory
@@ -137,7 +136,6 @@ def itinerary_delete(request, pk):
     return redirect('ai_itinerary:itinerary_list')
 
 @login_required
-@csrf_exempt
 def chat_api(request):
     """
     AJAX endpoint for user conversations with the Travel Assistant.

@@ -27,6 +27,7 @@ _DESTINATION_SEED_MAP = {
     'sydney':      'sydney-opera',
     'santorini':   'santorini-blue',
     'maldives':    'maldives-ocean',
+    'maldive':     'maldives-ocean',
     'swiss':       'swiss-alps',
     'switzerland': 'swiss-alps',
     'new zealand': 'newzealand-fjord',
@@ -48,8 +49,6 @@ _DESTINATION_SEED_MAP = {
     'florence':    'florence-duomo',
     'athens':      'athens-parthenon',
     'hawaii':      'hawaii-beach',
-    'maldive':     'maldives-ocean',
-    'dubai':       'dubai-skyline',
     'shanghai':    'shanghai-skyline',
     'hong kong':   'hongkong-skyline',
     'seoul':       'seoul-palace',
@@ -105,7 +104,7 @@ def get_gemini_client():
         return None
 
 
-_MODEL = 'gemini-3.6-flash'
+_MODEL = 'gemini-2.0-flash'
 
 
 def _clean_html(text: str) -> str:

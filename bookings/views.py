@@ -62,7 +62,7 @@ def cancel_booking(request, booking_id):
     booking = get_object_or_404(Booking, pk=booking_id)
     
     # Check permissions: user must own booking or be staff
-    if booking.user != request.user and not request.user.is_staff and not request.user.role == 'admin':
+    if booking.user != request.user and not request.user.is_staff and request.user.role != 'admin':
         messages.error(request, "You do not have permission to cancel this booking.")
         return redirect('dashboard:redirect_dashboard')
         
